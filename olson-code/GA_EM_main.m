@@ -1,14 +1,14 @@
 function GA_EM_main()
 close all;
-SEED = 9876; % change this to get different data sets
+SEED = 1234; % change this to get different data sets
 
-rng(SEED);
-C = 4; % actual number of clusters
+rng(SEED); % initialize sample data
+C = 5; % actual number of clusters
 N = 200 * C; % number of points
 d = 2; % dimensions
 
-[data,means,sigmas] = SampleData(N,C,d); % generate data
-% TODO - compute MDL for real data set?
+[data, means, sigmas, MDL_true] = SampleData(N,C,d); % generate data
+disp(['True MDL: ', num2str(MDL_true)]); % print MDL value
 
 % plot actual data
 scrsz = get(groot,'ScreenSize');
@@ -27,11 +27,12 @@ for i=1:C
     Z = reshape(Z,size(X));
     contour(X,Y,Z,[.1,.1], 'LineColor', [0 0 0], 'LineWidth', 2);  % contour plot
 end
-title('Actual data and mixtures');
+title(['Actual data and mixtures, MDL = ',  num2str(MDL_true)]);
 
 % Run EM algorithm for comparison
-Pop = InitPopulation(data, C, C); % initialize with M_max = C and K = C
-P = Pop(end); % only use the last one, which has all components enabled
+rng(SEED); % reset random seed to ensure reproducibility
+Pop = InitPopulation(data, 15, C); % initialize (requires same M and K >= C to match GA-EM init)
+P = Pop(C); % only use the C^th one, which has correct components enabled
 EM_result = EM(P, data, 100);
 MDL_EM = MDLencode(EM_result,data); % compute MDL value for EM result
 disp(['EM: ', num2str(MDL_EM)]); % print MDL value
