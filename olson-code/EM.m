@@ -1,87 +1,64 @@
-function Pop_prime = EM(Pop, data, R)
-% Pop is a K x 1 population of structs, preallocate for speed
-Pop_prime = repmat( struct('code', [], 'weights', [], 'means', [], 'covs',...
-    []), size(Pop,1), 1);
+function Pop = EM(Pop, data, R)
+% Pop is a K x 1 population of structs
 
 for i = 1:size(Pop,1)
-    newP = runEM(Pop(i), data, R); % Run EM on each member of populatin
-    
-    % Update new members
-    Pop_prime(i).code = newP.code;
-    Pop_prime(i).weights = newP.weights;
-    Pop_prime(i).means = newP.means;
-    Pop_prime(i).covs = newP.covs;
+    Pop(i) = runEM(Pop(i), data, R); % Run EM on each member of population
 end
 end
 
-function newP = runEM(P, data, R)
+function P = runEM(P, data, R)
 code=P.code;
 ws=P.weights;
 mus=P.means;
 sigs=P.covs;
 
 delta = 1; % this will be the change in relative log likelihood
-eps = 10^-5; % if delta < eps, terminate early
-newP = P;
+eps = 10^-6; % if delta < eps, terminate early
+logLike = Inf; % init log likelihood
 
 M = length(code);
+M_true = sum(code);
+index = 1:M;
+index = index(logical(code));
 
-newWs = ws;
-newMus = mus;
-newSigs = sigs;
-gamma = zeros(size(data, 1), M);
+gamma = zeros(size(data, 1), M_true);
 
+% M-step (update weights, means, sigma)
+    function M_step()
+        for k=1:M_true
+            
+            % covariances
+            centered = bsxfun(@minus, data, mus(:,index(k))'); % center data
+            sigs(:,:,index(k)) = bsxfun(@times, centered, gamma(:,k))' * centered /...
+                sum(gamma(:,k));
+        end
+    end
 ct = 0;
 while (ct < R && delta > eps)
-    oldP = newP;
     ct = ct + 1;
-    ws = newWs;
-    mus = newMus;
-    sigs = newSigs;
+    oldLogLike = logLike;
     
     % E-step (update gamma)
-    for k=1:M
-        if (code(k) == 0)
-            continue;
-        end
-        gamma(:,k) = ws(k) * mvnpdf(data, mus(:,k)', sigs(:,:,k));
+    for k=1:M_true;
+        gamma(:,k) = ws(index(k)) * mvnpdf(data, mus(:,index(k))', sigs(:,:,index(k)));
     end
+    gamma = gamma ./ repmat(sum(gamma,2), 1, M_true);
     
-    kSum = sum(gamma(:,logical(code)),2);
-    gamma(:,logical(code)) = gamma(:,logical(code)) ./ repmat(kSum, 1, sum(code));
-    if(sum(isnan(gamma(:)))>0)
-        % This was causing problems before, but shouldn't happen anymore.
-        error('Error computing gamma, NaN detected');
-    end
-    
-    % M-step (update weights, means, sigma)
-    for k=1:M
-        if (code(k) == 0)
-            continue;
-        end
+    for k = 1:M_true
         % weights
-        newWs(k) = mean(gamma(:, k));
+        ws(index(k)) = mean(gamma(:, k));
         
         % means
-        newMus(:, k) = data' * gamma(:, k) / sum(gamma(:, k));
-        if(sum(isnan(newMus(:,k)))>0)
-            error(['err ', num2str(k)]);
-        end
-        
-        % covariances
-        centered = bsxfun(@minus, data, newMus(:,k)'); % center data
-        newSigs(:,:,k) = centered' * diag(gamma(:,k)) * centered /...
-            sum(gamma(:,k))+eye(size(data,2))*(1e-6);
+        mus(:, index(k)) = data' * gamma(:, k) / sum(gamma(:, k));
     end
-    
-    % store updated values
-    newP.code = code;
-    newP.weights = newWs;
-    newP.means = newMus;
-    newP.covs = newSigs;
+    M_step();
     
     % compute relative change in log likelihood
-    delta = abs(1 - logLikelihood(newP, data)/logLikelihood(oldP, data));
+    logLike = logLikelihood(P, data);
+    delta = abs(1 - logLike/oldLogLike);
 end
 
+P.weights = ws;
+P.means = mus;
+P.covs = sigs;
 end
