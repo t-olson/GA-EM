@@ -11,22 +11,22 @@ while (c_end ~= 5 && t < t_max)
     t = t + 1;
     
     % EM loop on parent population
-    P_prime = EM(P, data, R);
+    P = EM(P, data, R);
     % Compute MDL for updated parents
-    MDL_prime = MDLencode(P_prime, data);
+    MDL = MDLencode(P, data);
     
     % Produce offspring
-    P_2prime = Recombine(P_prime, H, data);
+    P_prime = Recombine(P, H, data);
     % EM loop on offspring population
-    P_3prime = EM(P_2prime, data, R);
+    P_prime = EM(P_prime, data, R);
     % Compute MDL for updated offspring
-    MDL_2prime = MDLencode(P_3prime, data);
+    MDL_prime = MDLencode(P_prime, data);
     
     % Sort combined population according to MDL value and extract top K
-    [MDL_list(t), P_4prime] = FitSelect([P_prime; P_3prime], [MDL_prime; MDL_2prime], K);
+    [MDL_list(t), P] = FitSelect([P; P_prime],[MDL; MDL_prime], K);
     
     % Store best candidate
-    a_min = P_4prime(1);
+    a_min = P(1);
     size_amin = sum(a_min.code);
     
     % If best candidate has different number of components, reset counter
@@ -38,9 +38,14 @@ while (c_end ~= 5 && t < t_max)
     end
     
     % Mutate new population (neither function affects best candidate)
+<<<<<<< HEAD
     P_5prime = Enforce(P_4prime, data);
     P = Mutate(P_5prime, data, p_m);
 
+=======
+    P = Enforce(P, data);
+    P = Mutate(P, data, p_m);
+>>>>>>> 4a42bec3362c9c83e875b75c89bc49edbd611156
 end
 % fprintf('Finished after %d iterations\n', t);
 

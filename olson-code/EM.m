@@ -1,16 +1,8 @@
-function Pop_prime = EM(Pop, data, R)
-% Pop is a K x 1 population of structs, preallocate for speed
-Pop_prime = repmat( struct('code', [], 'weights', [], 'means', [], 'covs',...
-    []), size(Pop,1), 1);
+function Pop = EM(Pop, data, R)
+% Pop is a K x 1 population of structs
 
 for i = 1:size(Pop,1)
-    newP = runEM(Pop(i), data, R); % Run EM on each member of populatin
-    
-    % Update new members
-    Pop_prime(i).code = newP.code;
-    Pop_prime(i).weights = newP.weights;
-    Pop_prime(i).means = newP.means;
-    Pop_prime(i).covs = newP.covs;
+    Pop(i) = runEM(Pop(i), data, R); % Run EM on each member of populatin
 end
 end
 
@@ -63,7 +55,11 @@ while (ct < R && delta > eps)
         
         % covariances
         centered = bsxfun(@minus, data, newMus(:,k)'); % center data
+<<<<<<< HEAD
         newSigs(:,:,k) = bsxfun(@times, centered', gamma(:,k)') * centered /...
+=======
+        newSigs(:,:,k) = bsxfun(@times, centered, gamma(:,k))' * centered /...
+>>>>>>> 4a42bec3362c9c83e875b75c89bc49edbd611156
             sum(gamma(:,k));
     end
     
