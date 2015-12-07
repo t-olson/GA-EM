@@ -1,10 +1,10 @@
 function GA_EM_main()
 close all;
-SEED = 1234; % change this to get different data sets
+SEED = 10; % change this to get different data sets
 
 rng(SEED); % initialize sample data
 C = 5; % actual number of clusters
-N = 200 * C; % number of points
+N = 300 * C; % number of points
 d = 2; % dimensions
 
 [data, means, sigmas, MDL_true] = SampleData(N,C,d); % generate data

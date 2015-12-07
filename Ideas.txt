@@ -1,0 +1,37 @@
+Mutation:
+1) Range of mean selection
+2) Mutate covariance?
+
+Adjusting weights
+1) Store weights for all members
+2) Init weights non-uniformly?
+
+Minimum MDL vs true MDL
+1) Some peaks may merge (thus fewer clusters)
+2) Some peaks may overlap and distort estimates
+3) Global minimum != true model
+
+Applications
+1) Synthetic data
+2) PCA on Pendigit data with 2,3,4 eigenvalues kept -- compare MDL values
+
+Approximations
+1) Using MDL as tradeoff between accuracy and cluster # (weight differently?)
+2) Global vs local minima
+
+Tradeoff of R vs accuracy vs time
+
+
+TODO--
+xx 0) Check that it is working as intended
+J 1) Initialization with k-means
+xx 2) Compute the true MDL values for the sample data by generating an individual with the input weights, means, and covariances. We can compare these to the results of GA-EM and EM.
+W 3) Apply it to other data sets
+Q 4) (MODEL SELECTION) Play around with various configuration parameters to see if there are better choices
+xx 5) See if my code and Tim’s code provide similar results =P
+xx 6) Apply it to synthetic data and real data to see the difference in behavior
+W 7) Dimension reduction using PCA for Pendigit data and then apply the code to the PCA-transformed data
+W 8) Search for any possible improvements on the method. The professor mentioned we should also discuss competitors, possible extensions, etc. This can be explored along with (4), (6).
+T (9) Compare runtime/complexity of both algorithms
+Although GA_EM generally gives better MDL, it also takes more time to run. Perhaps play around with parameter R as trade-off between accuracy and computation time? Also, I feel that calculating correlation coefficient in Enforced Mutation might be one of the slower parts (though I have not confirmed this is the bottleneck). If this is true, we can explore some alternatives
+J (10) GA Overview

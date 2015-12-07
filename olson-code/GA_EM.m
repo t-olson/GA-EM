@@ -1,6 +1,6 @@
 function [best, MDL_list] = GA_EM(data)
 % Set Parameters
-R = 3; % number of EM steps for each GA iteration
+R = 5; % number of EM steps for each GA iteration
 M = 15; % max number of components
 K = 6; % size of parent population
 H = floor(.8*K); % number of offspring
