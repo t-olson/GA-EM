@@ -19,13 +19,14 @@ for i = 2:size(P,1) % skip best candidate
     shifts = (rand(size(mask(mask))) - 1/2) .* meanRange(mask);
     newP(i).means(mask) = newP(i).means(mask) + shifts;
     
+    % DON'T MUTATE COVARIANCES!
     % mutate covariances by changing eigenvalues to ensure it remains PD
-    mask = rand(d, 1) < p_m * d / L;
-    for k = 1:M;
-        [V,D] = eig(newP(i).covs(:,:,k));
-        lambda = diag(D);
-        lambda(mask) = max(max(covData(:)) * rand(length(mask(mask)),1), .1);
-        newP(i).covs(:,:,k) = V * diag(sort(lambda)) * V';
-    end
+%     mask = rand(d, 1) < p_m * d / L;
+%     for k = 1:M;
+%         [V,D] = eig(newP(i).covs(:,:,k));
+%         lambda = diag(D);
+%         lambda(mask) = max(max(covData(:)) * rand(length(mask(mask)),1), .1);
+%         newP(i).covs(:,:,k) = V * diag(sort(lambda)) * V';
+%     end
 end
 end
