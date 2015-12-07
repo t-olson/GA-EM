@@ -1,21 +1,25 @@
-function P = Enforce(P, data)
+function newP = Enforce(P, data)
 t_corr = 0.95; % maximum correlation allowed between components
 
 M = length(P(1).code);
 N = size(data,1);
 K = size(P,1);
+newP = P;
 for i = 2:K % skip best candidate
     % store local copies of data
     code = P(i).code;
     n = sum(code); % number of active components
     gamma = zeros(N,M);
+    ws = P(i).weights;
+    mus = P(i).means;
+    sigs = P(i).covs;
     
     % compute gamma
     for k=1:M
         if (code(k) == 0)
             continue;
         end
-        gamma(:,k) = P(i).weights(k) .* mvnpdf(data, P(i).means(:,k)', P(i).covs(:,:,k));
+        gamma(:,k) = ws(k) .* mvnpdf(data, mus(:,k)', sigs(:,:,k));
     end
     kSum = sum(gamma(:,logical(code)),2);
     gamma(:,logical(code)) = gamma(:,logical(code)) ./ repmat(kSum,1,sum(code));
@@ -36,20 +40,26 @@ for i = 2:K % skip best candidate
     % conversions to real indices of components
     realComponents = 1:M;
     realComponents = realComponents(Ind);
-    components = unique(components);
+    
     % update forced components (repeats will be skipped because we check
     % the new code each time)
     for t = 1:length(components)
         j = realComponents(components(t));
+        if (newP(i).code(j) == 0)
+            continue;
+        end
         if(rand < .5)
             % clear component and set weights to uniform
             n = n - 1;
-            P(i).code(j) = 0;
-            P(i).weights = zeros(1, M);
-            P(i).weights(logical(P(i).code)) = 1 / n;
+            code(j) = 0;
+            newP(i).code(j) = 0;
+            newP(i).weights = zeros(1, M);
+            newP(i).weights(logical(newP(i).code)) = 1 / n;
         else
             % set mean to random data point
-            P(i).means(:,j) = data(randi(N),:)';
+            size(newP(i).means);
+            size(data(randi(N),:)');
+            newP(i).means(:,j) = data(randi(N),:)';
         end
     end
 end
