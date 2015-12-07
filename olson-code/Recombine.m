@@ -1,14 +1,17 @@
 function children = Recombine(P, H, data)
 thresh = 0.05; % threshold for annihilating component (should set according to dimension of data)
+children = repmat( struct('code', [], 'weights', [], 'means', [], 'covs',...
+        []), 2*ceil(H/2), 1); % preallocate for speed
 
 K = size(P, 1);
-pairs = zeros(H, 2);
+pairs = zeros(ceil(H/2), 2);
 numbers = randperm(K);
-for h=1:H
+for h=1:ceil(H/2)
     i = numbers(h);
     pairs(h, :) = [numbers(i), numbers(mod(i, K) + 1)];
-    children(h, :) = Mate(P(pairs(h,:)), data, thresh);
+    children(2*h-1:2*h) = Mate(P(pairs(h,:)), data, thresh);
 end
+children = children(1:H);
 
 end
 

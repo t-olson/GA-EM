@@ -49,10 +49,6 @@ while (ct < R && delta > eps)
     
     kSum = sum(gamma(:,logical(code)),2);
     gamma(:,logical(code)) = gamma(:,logical(code)) ./ repmat(kSum, 1, sum(code));
-    if(sum(isnan(gamma(:)))>0)
-        % This was causing problems before, but shouldn't happen anymore.
-        error('Error computing gamma, NaN detected');
-    end
     
     % M-step (update weights, means, sigma)
     for k=1:M
@@ -64,14 +60,11 @@ while (ct < R && delta > eps)
         
         % means
         newMus(:, k) = data' * gamma(:, k) / sum(gamma(:, k));
-        if(sum(isnan(newMus(:,k)))>0)
-            error(['err ', num2str(k)]);
-        end
         
         % covariances
         centered = bsxfun(@minus, data, newMus(:,k)'); % center data
-        newSigs(:,:,k) = centered' * diag(gamma(:,k)) * centered /...
-            sum(gamma(:,k))+eye(size(data,2))*(1e-6);
+        newSigs(:,:,k) = bsxfun(@times, centered', gamma(:,k)') * centered /...
+            sum(gamma(:,k));
     end
     
     % store updated values
