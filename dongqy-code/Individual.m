@@ -141,7 +141,7 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
 
                 llh = sum(log(tmp));
             else
-                llh = Inf;
+                llh = -Inf;
             end
         end
         
@@ -150,7 +150,8 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
         function r = MDL(obj, X)
             d = size(X, 1);
             N = size(X, 2);
-            r = -log_likelihood(obj, X) + obj.num()*(d + d*(d+1)/2)/2*log(N);
+            L = d + d*(d+1)/2;
+            r = -log_likelihood(obj, X) + obj.num()*(L+1)/2*log(N);
         end
         
         % Do the enforced mutation on this individual
