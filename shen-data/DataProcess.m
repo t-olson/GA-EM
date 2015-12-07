@@ -25,4 +25,14 @@ X = U2'*X;
 % scatter plot with groups
 gscatter(X(1,:), X(2,:),label,[],'.',2);
 
+% dump the reduced feature and label to a .mat file
+X = X';
+ReadMe = ['X is the feature matrix.' ...
+          'X contains 5629 observations and each observation is 2 dimensional.'...
+          'label contains the labels (i.e. the real digit) of that observation'];
+save('pendigit_pca_2', 'X', 'label', 'ReadMe');
+
+
+
+
 
