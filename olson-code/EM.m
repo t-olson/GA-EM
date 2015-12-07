@@ -55,11 +55,7 @@ while (ct < R && delta > eps)
         
         % covariances
         centered = bsxfun(@minus, data, newMus(:,k)'); % center data
-<<<<<<< HEAD
-        newSigs(:,:,k) = bsxfun(@times, centered', gamma(:,k)') * centered /...
-=======
         newSigs(:,:,k) = bsxfun(@times, centered, gamma(:,k))' * centered /...
->>>>>>> 4a42bec3362c9c83e875b75c89bc49edbd611156
             sum(gamma(:,k));
     end
     

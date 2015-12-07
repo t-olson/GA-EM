@@ -38,14 +38,8 @@ while (c_end ~= 5 && t < t_max)
     end
     
     % Mutate new population (neither function affects best candidate)
-<<<<<<< HEAD
     P_5prime = Enforce(P_4prime, data);
     P = Mutate(P_5prime, data, p_m);
-
-=======
-    P = Enforce(P, data);
-    P = Mutate(P, data, p_m);
->>>>>>> 4a42bec3362c9c83e875b75c89bc49edbd611156
 end
 % fprintf('Finished after %d iterations\n', t);
 

@@ -1,16 +1,9 @@
 function GA_EM_main()
 close all;
-<<<<<<< HEAD
 SEED = 3; % change this to get different data sets
 
 % Set GA-EM Parameters
 R = 5; % number of EM steps for each GA iteration
-=======
-SEED = 123; % change this to get different data sets
-
-% Set GA-EM Parameters
-R = 3; % number of EM steps for each GA iteration
->>>>>>> 4a42bec3362c9c83e875b75c89bc49edbd611156
 M = 15; % max number of components
 K = 6; % size of parent population
 H = 4;%floor(.8*K); % number of offspring
@@ -48,13 +41,8 @@ rng(SEED); % reset random seed to ensure reproducibility
 disp('Running EM alone');
 tic
 Pop = InitPopulation(data, 15, C); % initialize (requires same M and K >= C to match GA-EM init)
-<<<<<<< HEAD
 newP = Pop(C); % only use the C^th one, which has correct components enabled
 EM_result = EM(newP, data, Inf);
-=======
-EM_result = Pop(C); % only use the C^th one, which has correct components enabled
-EM_result = EM(EM_result, data, Inf);
->>>>>>> 4a42bec3362c9c83e875b75c89bc49edbd611156
 MDL_EM = MDLencode(EM_result,data); % compute MDL value for EM result
 toc
 disp(['EM: ', num2str(MDL_EM)]); % print MDL value
@@ -88,11 +76,7 @@ index = index(logical(GA_EM_result(1).code));
 for i=1:length(index)
     Z = mvnpdf([X(:) Y(:)], GA_EM_result.means(:,index(i))', GA_EM_result.covs(:,:,index(i))); % compute Gaussian pdf
     Z = reshape(Z,size(X));
-<<<<<<< HEAD
     contour(X,Y,Z, 'LineColor', [0 1 0], 'LineWidth', 2);  % contour plot
-=======
-    contour(X,Y,Z,[.1,.1], 'LineColor', [0 1 0], 'LineWidth', 2);  % contour plot
->>>>>>> 4a42bec3362c9c83e875b75c89bc49edbd611156
 end
 title(['Best EM Mixture, MDL = ',  num2str(MDL_list(end))]);
 
