@@ -78,11 +78,12 @@ best_individual = Individual(new_pop(best_individual_ind).Value);
 
 % Final EM run until convergence on the best_individual selected
 tol = 1e-6;
-best_individual.EM_gmm(X, 500);
 best_mdl = best_individual.mdl;
+best_individual.EM_gmm(X, 500);
 while abs(best_individual.mdl - best_mdl)/best_mdl > tol
-    best_individual.EM_gmm(X, 100);
     best_mdl = best_individual.mdl;
+    best_individual.EM_gmm(X, 100);
 end
+best_mdl = best_individual.mdl;
 
 end
