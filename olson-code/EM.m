@@ -6,30 +6,23 @@ for i = 1:size(Pop,1)
 end
 end
 
-function newP = runEM(P, data, R)
+function P = runEM(P, data, R)
 code=P.code;
-ws=P.weights;
-mus=P.means;
-sigs=P.covs;
+logLike = logLikelihood(P, data);
 
 delta = 1; % this will be the change in relative log likelihood
 eps = 10^-5; % if delta < eps, terminate early
-newP = P;
 
 M = length(code);
 
-newWs = ws;
-newMus = mus;
-newSigs = sigs;
 gamma = zeros(size(data, 1), M);
 
 ct = 0;
 while (ct < R && delta > eps)
-    oldP = newP;
     ct = ct + 1;
-    ws = newWs;
-    mus = newMus;
-    sigs = newSigs;
+    ws=P.weights;
+    mus=P.means;
+    sigs=P.covs;
     
     % E-step (update gamma)
     for k=1:M
@@ -48,25 +41,26 @@ while (ct < R && delta > eps)
             continue;
         end
         % weights
-        newWs(k) = mean(gamma(:, k));
+        ws(k) = mean(gamma(:, k));
         
         % means
-        newMus(:, k) = data' * gamma(:, k) / sum(gamma(:, k));
+        mus(:, k) = data' * gamma(:, k) / sum(gamma(:, k));
         
         % covariances
-        centered = bsxfun(@minus, data, newMus(:,k)'); % center data
-        newSigs(:,:,k) = bsxfun(@times, centered, gamma(:,k))' * centered /...
-            sum(gamma(:,k));
+        centered = bsxfun(@minus, data, mus(:,k)'); % center data
+        sigs(:,:,k) = bsxfun(@times, centered, gamma(:,k))' * centered /...
+            sum(gamma(:,k)) + (1e-6)*eye(size(data,2)); % add small stabilizer
     end
     
     % store updated values
-    newP.code = code;
-    newP.weights = newWs;
-    newP.means = newMus;
-    newP.covs = newSigs;
+    P.weights = ws;
+    P.means = mus;
+    P.covs = sigs;
     
     % compute relative change in log likelihood
-    delta = abs(1 - logLikelihood(newP, data)/logLikelihood(oldP, data));
+    oldLogLike = logLike;
+    logLike = logLikelihood(P, data);
+    delta = abs(1 - logLike/oldLogLike);
 end
 
 end

@@ -11,19 +11,19 @@ while (c_end ~= 5 && t < t_max)
     t = t + 1;
     
     % EM loop on parent population
-    P = EM(P, data, R);
+    P_prime = EM(P, data, R);
     % Compute MDL for updated parents
-    MDL = MDLencode(P, data);
+    MDL = MDLencode(P_prime, data);
     
     % Produce offspring
-    P_prime = Recombine(P, H, data);
+    P_2prime = Recombine(P_prime, H, data);
     % EM loop on offspring population
-    P_prime = EM(P_prime, data, R);
+    P_3prime = EM(P_2prime, data, R);
     % Compute MDL for updated offspring
-    MDL_prime = MDLencode(P_prime, data);
+    MDL_prime = MDLencode(P_3prime, data);
     
     % Sort combined population according to MDL value and extract top K
-    [MDL_list(t), P] = FitSelect([P; P_prime],[MDL; MDL_prime], K);
+    [MDL_list(t), P_4prime] = FitSelect([P_prime; P_3prime],[MDL; MDL_prime], K);
     
     % Store best candidate
     a_min = P(1);

@@ -3,7 +3,7 @@ close all;
 SEED = 3; % change this to get different data sets
 
 % Set GA-EM Parameters
-R = 5; % number of EM steps for each GA iteration
+R = 4; % number of EM steps for each GA iteration
 M = 15; % max number of components
 K = 6; % size of parent population
 H = 4;%floor(.8*K); % number of offspring
