@@ -13,7 +13,8 @@ function P = InitPopulation(data, M, K)
     
     % Initialize using uniform weights, random means, Sigma = 1/sigSQ * I
     % Each member has different number active, from 1...K (requires M > K)
-    sigSQ = 1 / 10 * mean(var(data));
+%     sigSQ = 1 / 10 * mean(var(data));
+    dataCov = cov(data);
     
     % The i^th member has the first i components enabled, with uniform
     % weights
@@ -22,7 +23,7 @@ function P = InitPopulation(data, M, K)
         P(i).code = [ones(1, i), zeros(1, M - i)];
         P(i).weights = [repmat(1/i, 1, i), zeros(1, M - i)];
         P(i).means = data(indices, :)';
-        P(i).covs = repmat(1 / sigSQ * eye(d), 1, 1, M);
+        P(i).covs = repmat(dataCov, 1, 1, M); % repmat(dataCov, 1, 1, M);
     end
  
 end
