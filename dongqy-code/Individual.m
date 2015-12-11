@@ -9,9 +9,11 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
     end
     methods
         % Constructor
-        function obj = Individual(Mmax, d, X)
-            %   Mmax : int, > 0
+        function obj = Individual(Mmax, d, X, mode)
+            %   Mmax : maximal number of components
             %   d : dimension of trainning data
+            %   X : d x n data matrix
+            %   mode : Initialization mode, random or k-means
             if nargin == 2
                 obj.Binary = zeros(1, Mmax);
                 obj.Mu = zeros(d, Mmax);
@@ -35,7 +37,7 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
             % Default constructor
             elseif nargin == 0
             % Random initialization
-            elseif nargin == 3
+            elseif nargin == 4 && strcmp(mode,'random')
                 obj.Binary = zeros(1, Mmax);
                 obj.Mu = zeros(d, Mmax);
                 obj.Sigma = repmat(zeros(d), [1 1 Mmax]);
@@ -57,6 +59,32 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
                     obj.weight(p(i)) = 1/M;
                 end
                 obj.mdl = obj.MDL(X);
+            % k-clustering initialization
+            elseif nargin == 4 && strcmp(mode,'k-means')
+                obj.Binary = zeros(1, Mmax);
+                obj.Mu = zeros(d, Mmax);
+                obj.Sigma = repmat(zeros(d), [1 1 Mmax]);
+                obj.weight = zeros(1, Mmax);
+                obj.best_ind = false;
+                
+                assert(length(obj.Binary) == size(obj.Mu, 2));
+                assert(length(obj.Binary) == size(obj.Sigma, 3));
+                assert(size(obj.Mu, 1) == size(obj.Sigma, 1));
+                
+                M = randi([1,Mmax]);                % a random number as initial M
+                p = randperm(Mmax, M);              % randomly select M components
+                idx = kmeans(X.', M).';
+                for i = 1:M
+                    i_X = X(:, idx == i);
+                    i_num = sum(idx == i);
+                    i_mean = mean(i_X, 2);
+                    i_sample_cov = i_X*i_X.'/i_num;
+                    obj.Binary(p(i)) = 1;
+                    obj.Mu(:, p(i)) = i_mean;
+                    obj.Sigma(:, :, p(i)) = i_sample_cov;
+                    obj.weight(p(i)) = 1/M;
+                end
+                obj.mdl = obj.MDL(X);
             else
                 error('Constructor error.');
             end
@@ -75,8 +103,10 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
         %   X : d x n data matrix
         %   R : number of iterations
         function EM_gmm(obj, X, R)
+
             N = size(X, 2);
             M = obj.num();
+
             mu = obj.Mu(:, obj.Binary == 1);
             sigma = obj.Sigma(:,:,obj.Binary == 1);
             w = obj.weight(obj.Binary == 1);
@@ -120,6 +150,24 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
             obj.Sigma(:,:,obj.Binary == 1) = new_sigma;
             obj.weight(obj.Binary == 1) = new_w;
             obj.mdl = obj.MDL(X);
+            
+            
+            % (Optional) Annihilate non-supporting component:
+            % If new_w < t_annihilate/N, annilate this component
+%             d = size(X, 1);
+%             Mmax = length(obj.Binary);
+%             annihilate_part = (new_w < min((d/M)*0.02, 1/M*0.02));
+%             annihilate_w = sum(new_w(annihilate_part));
+%             new_w(annihilate_part) = 0;
+%             new_M = M - sum(annihilate_part);
+%             new_w(~annihilate_part) = new_w(~annihilate_part) + annihilate_w/new_M;
+%             obj.weight(obj.Binary == 1) = new_w;
+%             indices = 1:Mmax;
+%             indices = indices(obj.Binary == 1);
+%             obj.Binary(indices(annihilate_part)) = 0;
+%             assert(new_M == obj.num());
+%             if new_M~=0 assert(abs(sum(obj.weight)-1) < 1e-6); end
+%             obj.mdl = obj.MDL(X);
         end
         
         % Compute the log-likelihood of data X based on this individual
@@ -196,6 +244,7 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
             % Deal with weight after the enforced mutation
             new_M = obj.num();
             obj.weight(obj.Binary == 1) = 1/new_M;
+            obj.weight(obj.Binary == 0) = 0;
             obj.mdl = obj.MDL(X);
         end
         
@@ -228,6 +277,7 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
             % Deal with weight after the mutation
             new_M = obj.num();
             obj.weight(obj.Binary == 1) = 1/new_M;
+            obj.weight(obj.Binary == 0) = 0;
             obj.mdl = obj.MDL(X);
         end
     end

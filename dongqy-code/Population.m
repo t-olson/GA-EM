@@ -5,13 +5,17 @@ classdef Population
     methods
         % Constructor
         %   K : number of individual in the population
-        function obj = Population(K, Mmax, d, X)
+        %   Mmax : maximal number of components
+        %   d : dimension of trainning data
+        %   X : d x n data matrix
+        %   mode : Initialization mode, random or k-means
+        function obj = Population(K, Mmax, d, X, mode)
             if nargin > 1
                 obj(1, K) = Population;
                 for i = 1:K
-                    if nargin == 4
+                    if nargin == 5
                         % Random initialization of each individual
-                        obj(i).Value = Individual(Mmax, d, X);
+                        obj(i).Value = Individual(Mmax, d, X, mode);
                     elseif nargin == 3
                         % Initialize each individual as bare ones with
                         % right sizes
@@ -79,7 +83,9 @@ classdef Population
                 M1 = pop_children(2*i-1).Value.num();
                 M2 = pop_children(2*i).Value.num();
                 pop_children(2*i-1).Value.weight(pop_children(2*i-1).Value.Binary == 1) = 1/M1;
+                pop_children(2*i-1).Value.weight(pop_children(2*i-1).Value.Binary == 0) = 0;
                 pop_children(2*i).Value.weight(pop_children(2*i).Value.Binary == 1) = 1/M2;
+                pop_children(2*i).Value.weight(pop_children(2*i).Value.Binary == 0) = 0;
                 if M1~=0 assert(abs(sum(pop_children(2*i-1).Value.weight) - 1) < 1e-6); end
                 if M2~=0 assert(abs(sum(pop_children(2*i).Value.weight) - 1) < 1e-6); end
                 % Calculate the MDL values for the 2 children

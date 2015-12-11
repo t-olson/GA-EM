@@ -8,8 +8,9 @@
 %   Mmax : maximal number of allowed components
 %   t : correlation threshold
 %   pm : mutation probability
+%   mode : Initialization mode, random or k-means
 
-function [best_M_new, best_mdl, best_individual] = GA_EM(X, K, H, R, Mmax, t, pm)
+function [best_M_new, best_mdl, best_individual] = GA_EM(X, K, H, R, Mmax, t, pm, mode)
 
 d = size(X, 1);
 N = size(X, 2);
@@ -17,8 +18,8 @@ best_M = 0;
 best_M_new = 1;
 best_individual_ind = 0;
 best_consecutive = 0;
-pop = Population(K, Mmax, d, X);
-new_pop = Population(K, Mmax, d, X);
+pop = Population(K, Mmax, d, X, mode);
+new_pop = Population(K, Mmax, d, X, mode);
 
 while best_consecutive < 5
     % Step 1 : Perform R EM steps on current population

@@ -3,31 +3,33 @@
 
 % This is the main script to generate data, run GA_EM and plot
 
+rng(0);
 % Load/Generate data from true_M 2D distributions
 gen_data = true;
 true_M = 5;
 d = 2;
 if gen_data
     N = 300*true_M;
-    [X, true_mu, true_sigma] = SampleData(d, N, true_M, 3.0);
+    [X, true_mu, true_sigma] = SampleData(d, N, true_M);
 end
 
 % Run GA_EM on the data
-K = 6;          %   K : number of individual in the population
-H = 4;          %   H : number of offsprings in the new population, assumed to be multiples of 2
-R = 3;          %   R : number of iterations
-Mmax = 15;      %   Mmax : maximal number of allowed components
-t = 0.95;       %   t : correlation threshold
-pm = 0.02;      %   pm : mutation probability
-[best_M, best_mdl, best_individual] = GA_EM(X, K, H, R, Mmax, t, pm);
+init_mode = 'k-means';  % Initialization mode : random or k-means
+K = 6;                  %   K : number of individual in the population
+H = 4;                  %   H : number of offsprings in the new population, assumed to be multiples of 2
+R = 3;                  %   R : number of iterations
+Mmax = 15;              %   Mmax : maximal number of allowed components
+t = 0.95;               %   t : correlation threshold
+pm = 0.02;              %   pm : mutation probability
+[best_M, best_mdl, best_individual] = GA_EM(X, K, H, R, Mmax, t, pm, init_mode);
 mu = best_individual.Mu(:, best_individual.Binary == 1);
 sigma = best_individual.Sigma(:,:,best_individual.Binary == 1);
 
 % Run EM on the data with the right number of clusters : true_M
 tol = 1e-6;
-individual_EM = Individual(true_M, d, X);
+individual_EM = Individual(true_M, d, X, init_mode);
 while individual_EM.num() ~= true_M
-    individual_EM = Individual(true_M, d, X);
+    individual_EM = Individual(true_M, d, X, init_mode);
 end
 assert(individual_EM.num() == true_M);
 mdl_EM = individual_EM.mdl;
