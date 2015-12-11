@@ -1,0 +1,59 @@
+*****************************************************
+Report outline
+
+Introduction 
+    1) Pros and Cons of EM
+    2) Motivation
+    3) Overview and backgroud of GA
+
+Methods
+    GA-EM description
+    4) Encoding
+    5) Recombination
+    6) Mutation
+    7) Selection
+    8) MDL criterion
+
+Results and Discussion
+    9) Model selection
+    10) Initialization
+            Random and k-means
+    11) Application on real data 
+            Dimension reduction, 
+            Why go beyond PCA
+                Symmetry
+                Separation
+    12) Performance
+            Human time
+            Optimization
+
+    13) Extension of GA-EM
+            GA-EM of fixed number of components
+            Mixture model other than GMM
+            MDL criterion alternatives (weight MDL, etc)
+            GMM in higher dimensions          
+
+**************************************************************
+Individual responsibilities in writing
+
+Qiaoyuan: 4, 5, 9, 10
+Jeremy: 1, 2, 3
+Tim: 7, 8, 12, 13
+Wenbo: 6, 11
+
+**************************************************************
+Guide line of page limit
+Qiaoyuan: 
+    ~1 page for 4) + 5)
+    1.5~2 page for 9) + 10)
+
+Jeremy: 
+    1.5~2 page for 1) + 2) + 3)
+
+Tim:
+    1~1.5 page for 7) + 8)
+    2~2.5 page for 12 + 13)
+
+Wenbo:
+    ~0.5 page for 6)
+    2~2.5 page for 11)
