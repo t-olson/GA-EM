@@ -4,12 +4,12 @@
 % This is the main script to generate data, run GA_EM and plot
 
 % Load/Generate data from true_M 2D distributions
-gen_data = false;
+gen_data = true;
 true_M = 5;
 d = 2;
 if gen_data
     N = 300*true_M;
-    [X, true_mu, true_sigma] = SampleData(d, N, true_M);
+    [X, true_mu, true_sigma] = SampleData(d, N, true_M, 3.0);
 end
 
 % Run GA_EM on the data
@@ -92,7 +92,8 @@ if gen_data
     true_individual.Sigma = true_sigma;
     true_individual.mdl = true_individual.MDL(X);
     
-    subplot(2, 2, 3);
+    figure
+%     subplot(2, 2, 3);
     % Display a scatter plot of the original data
     scatter(X(1,:),X(2,:),'b', 'LineWidth', 1.5)
     hold on
