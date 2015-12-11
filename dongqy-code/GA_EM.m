@@ -10,7 +10,7 @@
 %   pm : mutation probability
 %   mode : Initialization mode, random or k-means
 
-function [best_M_new, best_mdl, best_individual] = GA_EM(X, K, H, R, Mmax, t, pm, mode)
+function [best_M_new, best_mdl, best_individual, mdl_array] = GA_EM(X, K, H, R, Mmax, t, pm, mode)
 
 d = size(X, 1);
 N = size(X, 2);
@@ -21,6 +21,7 @@ best_consecutive = 0;
 pop = Population(K, Mmax, d, X, mode);
 new_pop = Population(K, Mmax, d, X, mode);
 
+mdl_array = Inf;
 while best_consecutive < 5
     % Step 1 : Perform R EM steps on current population
     pop.EM_run(X, R);
@@ -50,7 +51,8 @@ while best_consecutive < 5
     end
     
     % Step 7 : Determine the best MDL and the best individual
-    [~, ind] = min(arrayfun(@(x) x.Value.mdl, new_pop));
+    [best_mdl, ind] = min(arrayfun(@(x) x.Value.mdl, new_pop));
+    mdl_array = [mdl_array, best_mdl];
     best_individual_ind = ind;
     new_pop(ind).Value.best_ind = true;
     % Set all other individuals'best_ind in new_pop to be false

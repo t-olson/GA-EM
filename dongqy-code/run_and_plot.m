@@ -21,7 +21,7 @@ R = 3;                  %   R : number of iterations
 Mmax = 15;              %   Mmax : maximal number of allowed components
 t = 0.95;               %   t : correlation threshold
 pm = 0.02;              %   pm : mutation probability
-[best_M, best_mdl, best_individual] = GA_EM(X, K, H, R, Mmax, t, pm, init_mode);
+[best_M, best_mdl, best_individual, ~] = GA_EM(X, K, H, R, Mmax, t, pm, init_mode);
 mu = best_individual.Mu(:, best_individual.Binary == 1);
 sigma = best_individual.Sigma(:,:,best_individual.Binary == 1);
 
