@@ -36,13 +36,13 @@ for i = 2:K % skip best candidate
     % with 50% probability, select the other component instead
     randvals = rand(length(rlist),1);
     components(randvals < .5) = clist(randvals<.5);
+    components = unique(components);
     
     % conversions to real indices of components
     realComponents = 1:M;
     realComponents = realComponents(Ind);
     
-    % update forced components (repeats will be skipped because we check
-    % the new code each time)
+    % update forced components
     for t = 1:length(components)
         j = realComponents(components(t));
         if (newP(i).code(j) == 0)
