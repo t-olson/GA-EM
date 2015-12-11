@@ -8,17 +8,15 @@ end
 
 function P = runEM(P, data, R)
 code=P.code;
-logLike = logLikelihood(P, data);
-
-delta = 1; % this will be the change in relative log likelihood
-eps = 10^-5; % if delta < eps, terminate early
-
 M = length(code);
+
+logLike = Inf; % dummy log-likelihood
+eps = 10^-5; % if relative change in logLikelihood < eps, terminate early
 
 gamma = zeros(size(data, 1), M);
 
 ct = 0;
-while (ct < R && delta > eps)
+while (ct < R) % Can also break after E-step if logLikelihood doesn't change
     ct = ct + 1;
     ws=P.weights;
     mus=P.means;
@@ -33,6 +31,13 @@ while (ct < R && delta > eps)
     end
     
     kSum = sum(gamma(:,logical(code)),2);
+    
+    oldLogLike = logLike;
+    logLike = sum(log(kSum));
+    if(abs(1 - logLike/oldLogLike) < eps)
+        break;
+    end
+    
     gamma(:,logical(code)) = gamma(:,logical(code)) ./ repmat(kSum, 1, sum(code));
     
     % M-step (update weights, means, sigma)
@@ -56,11 +61,6 @@ while (ct < R && delta > eps)
     P.weights = ws;
     P.means = mus;
     P.covs = sigs;
-    
-    % compute relative change in log likelihood
-    oldLogLike = logLike;
-    logLike = logLikelihood(P, data);
-    delta = abs(1 - logLike/oldLogLike);
 end
 
 end
