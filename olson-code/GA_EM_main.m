@@ -1,16 +1,16 @@
 function GA_EM_main()
 close all;
-SEED = 3; % change this to get different data sets
 
 % Set GA-EM Parameters
-R = 4; % number of EM steps for each GA iteration
+R = 3; % number of EM steps for each GA iteration
 M = 15; % max number of components
 K = 6; % size of parent population
 H = 4;%floor(.8*K); % number of offspring
 p_m = 0.02; % mutation rate
 
-rng(SEED); % initialize sample data
 
+SEED = 0; % change this to get different data sets & initialization
+rng(SEED); % initialize sample data
 generateData = false;
 
 if(generateData)
@@ -20,7 +20,7 @@ if(generateData)
     [data, means, sigmas, MDL_true] = SampleData(N,C,d); % generate data
 else
     % write your own wrapper like LoadData() to load your true data set
-    [data, means, sigmas, C, N, d, MDL_true] = LoadData('wine_pca_2'); % real data
+    [data, means, sigmas, C, N, d, MDL_true] = LoadData('..\..\datasets\pendigit_pca_2'); % real data
 end
 
 disp(['True MDL: ', num2str(MDL_true)]); % print MDL value
@@ -92,5 +92,5 @@ title(['Best GA-EM Mixture (', num2str(sum(GA_EM_result(1).code)), ' clusters), 
 subplot(2,2,4);
 hold off;
 plot(1:length(MDL_list), MDL_list(1:length(MDL_list)))
-title('MDL vs iterations');
+title(['MDL vs iterations (', num2str(length(MDL_list)), ')']);
 end

@@ -1,7 +1,8 @@
-function [X, means, sigmas, C, N, d varargout] = LoadData(filename)
+function [X, means, sigmas, C, N, d, varargout] = LoadData(filename)
 
 load(filename,'X','label');
-C = length(unique(label));
+labelSet = unique(label);
+C = length(labelSet);
 [N,d] = size(X);
 
 weights = zeros(1,C);
@@ -9,7 +10,7 @@ means = zeros(C, d);
 sigmas = zeros(d,d,C);
 
 for i=1:C
-    myX = X(label==i,:);
+    myX = X(label == labelSet(i),:);
     weights(i) = size(myX,1)/N;
     means(i,:) = mean(myX);
     sigmas(:,:,i) = cov(myX);
