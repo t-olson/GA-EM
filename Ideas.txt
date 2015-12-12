@@ -33,5 +33,5 @@ xx 6) Apply it to synthetic data and real data to see the difference in behavior
 W 7) Dimension reduction using PCA for Pendigit data and then apply the code to the PCA-transformed data
 W 8) Search for any possible improvements on the method. The professor mentioned we should also discuss competitors, possible extensions, etc. This can be explored along with (4), (6).
 T (9) Compare runtime/complexity of both algorithms
-Although GA_EM generally gives better MDL, it also takes more time to run. Perhaps play around with parameter R as trade-off between accuracy and computation time? Also, I feel that calculating correlation coefficient in Enforced Mutation might be one of the slower parts (though I have not confirmed this is the bottleneck). If this is true, we can explore some alternatives
+Although GA_EM generally gives better MDL, it also takes more time to run. Perhaps play around with parameter R as trade-off between accuracy and computation time?
 J (10) GA Overview
