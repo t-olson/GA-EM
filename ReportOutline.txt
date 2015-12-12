@@ -10,7 +10,7 @@ Methods
     GA-EM description
     4) Encoding
     5) Recombination
-    6) Mutation
+    6) Mutation and enforced mutation
     7) Selection
     8) MDL criterion
 
