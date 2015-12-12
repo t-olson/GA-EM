@@ -13,7 +13,7 @@ if gen_data
 end
 
 % Run GA_EM on the data with different model parameters
-init_mode = 'random';  % Initialization mode : random or k-means
+init_mode = 'k-means';  % Initialization mode : random or k-means
 K = 6;                  %   K : number of individual in the population
 H = 4;                  %   H : number of offsprings in the new population, assumed to be multiples of 2
 R = 3;                  %   R : number of iterations
@@ -33,7 +33,7 @@ end
 % Make plots
 figure
 hold on
-for i = length(R_array)
+for i = 1:length(R_array)
     iter_array = 1:length(mdl_cell{i});
     plot(iter_array, mdl_cell{i}, '--', 'LineWidth', 2);
 end

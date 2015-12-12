@@ -10,11 +10,11 @@ true_M = 5;
 d = 2;
 if gen_data
     N = 300*true_M;
-    [X, true_mu, true_sigma] = SampleData(d, N, true_M);
+    [X, true_mu, true_sigma] = SampleData(d, N, true_M, 1.2);
 end
 
 % Run GA_EM on the data
-init_mode = 'k-means';  % Initialization mode : random or k-means
+init_mode = 'random';  % Initialization mode : random or k-means
 K = 6;                  %   K : number of individual in the population
 H = 4;                  %   H : number of offsprings in the new population, assumed to be multiples of 2
 R = 3;                  %   R : number of iterations

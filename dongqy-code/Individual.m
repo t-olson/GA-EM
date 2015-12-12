@@ -119,9 +119,19 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
 
             maxiter = R;                % maximum num of iterations
             gamma = zeros(M, N);        % expectation of the indicator variable \gamma_i,k
-
+            
+            tol = 1e-6;
+            mdl_old = Inf;
             % R steps of EM Algorithm
             for iter = 1:maxiter
+                
+                mdl_new = obj.MDL(X);
+                % Stopping criterion
+                if abs(mdl_new - mdl_old) < tol
+                    break
+                else
+                    mdl_old = mdl_new;
+                end
 
                 % E-step
                 for k = 1:M
