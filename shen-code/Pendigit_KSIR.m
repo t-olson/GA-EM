@@ -74,4 +74,5 @@ gscatter(X2(:,1), X2(:,2),label_ts,[],'.',10);
 
 % dump the reduced feature and label to a .mat file
 X = X2;
-save('pendigit_ksir_2', 'X', 'label_ts');
+label = label_ts;
+save('pendigit_ksir_2', 'X', 'label');
