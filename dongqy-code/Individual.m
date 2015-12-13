@@ -78,7 +78,10 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
                     i_X = X(:, idx == i);
                     i_num = sum(idx == i);
                     i_mean = mean(i_X, 2);
-                    i_sample_cov = i_X*i_X.'/i_num + eye(d);
+                    i_sample_cov = i_X*i_X.'/i_num;
+                    if ~PD(i_sample_cov)
+                        i_sample_cov = i_sample_cov + eye(d);
+                    end
                     obj.Binary(p(i)) = 1;
                     obj.Mu(:, p(i)) = i_mean;
                     obj.Sigma(:, :, p(i)) = i_sample_cov;
@@ -194,11 +197,6 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
             if M~=0
                 tmp = 0;
                 for k = 1:M
-                    if ~PD(sigma(:,:,k))
-                        k
-                        obj
-                        sigma(:,:,k)
-                    end
                     tmp = tmp + w(k).*mvnpdf(X', mu(:, k)', sigma(:,:,k));
                 end
 
