@@ -105,7 +105,7 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
         %   obj : individual
         %   X : d x n data matrix
         %   R : number of iterations
-        function EM_gmm(obj, X, R)
+        function mdl_list = EM_gmm(obj, X, R)
 
             N = size(X, 2);
             M = obj.num();
@@ -125,16 +125,17 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
             
             tol = 1e-6;
             mdl_old = Inf;
+            mdl_list = [mdl_old];
             % R steps of EM Algorithm
             for iter = 1:maxiter
                 
                 mdl_new = obj.MDL(X);
                 % Stopping criterion
-%                 if abs(mdl_new - mdl_old) < tol
-%                     break
-%                 else
-%                     mdl_old = mdl_new;
-%                 end
+                if abs(mdl_new - mdl_old) < tol
+                    break
+                else
+                    mdl_old = mdl_new;
+                end
 
                 % E-step
                 for k = 1:M
@@ -156,6 +157,12 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
                 mu = new_mu;
                 sigma = new_sigma;
                 w = new_w;
+                
+                obj.Mu(:, obj.Binary == 1) = new_mu;
+                obj.Sigma(:,:,obj.Binary == 1) = new_sigma;
+                obj.weight(obj.Binary == 1) = new_w;
+                obj.mdl = obj.MDL(X);
+                mdl_list = [mdl_list, obj.mdl];
 
             end
 
