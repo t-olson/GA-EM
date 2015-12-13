@@ -3,10 +3,10 @@
 
 % This is the main script to generate data, run GA_EM and plot
 
-rng(0);
+rng(3);
 % Load/Generate data from true_M 2D distributions
-gen_data = true;
-true_M = 5;
+gen_data = false;
+true_M = 3;
 d = 2;
 if gen_data
     N = 300*true_M;
@@ -14,7 +14,7 @@ if gen_data
 end
 
 % Run GA_EM on the data
-init_mode = 'random';  % Initialization mode : random or k-means
+init_mode = 'k-means';  % Initialization mode : random or k-means
 K = 6;                  %   K : number of individual in the population
 H = 4;                  %   H : number of offsprings in the new population, assumed to be multiples of 2
 R = 3;                  %   R : number of iterations

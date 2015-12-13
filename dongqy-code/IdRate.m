@@ -10,7 +10,7 @@ Mmax = 20;              %   Mmax : maximal number of allowed components
 t = 0.95;               %   t : correlation threshold
 pm = 0.05;              %   pm : mutation probability
 
-init_mode = {'random'};     % Initialization mode : random or k-means
+init_mode = {'k-means'};     % Initialization mode : random or k-means
 file_name = {'wine_pca_2'}; % which data file to load
 for file_k=1:length(file_name)
     for init_k=1:length(init_mode)
