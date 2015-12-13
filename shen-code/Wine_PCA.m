@@ -1,12 +1,16 @@
 % EECS 545 F15 Final project
 % Genetic-based EM Algorithm for Learning Gaussian Mixture Models
+
 % This script import the wine data from a .txt file
-% perform the PCA to reduce the feature dimension
+% perform the Principle Component Analysis (PCA)
+% to reduce the feature dimensions
 
 clear, clc
+rng(0);
 
 fileName = 'wine_data.txt';
 X = importdata(fileName);
+X = X(randperm(length(X)),:);
 
 % label for each entry
 label = X(:,1);
@@ -35,20 +39,4 @@ gscatter(X(1,:), X(2,:),label,[],'o',10);
 
 % dump the reduced feature and label to a .mat file
 X = X';
-
-C = 3; % number of clusters
-d = 2;
-weights = ones(1,C);  % get the weights
-means = ones(C,d);  % calculate sample mean
-sigmas = ones(d,d,C); % calculate sample cov
-for k=1:C
-    Xk = X(label==k, :);
-    weights(k) = length(Xk) / length(X);
-    means(k,:) = mean(Xk);
-    sigmas(:,:,k) = cov(Xk);
-end
-
-ReadMe = ['X is the feature matrix.' ...
-          'X contains 178 observations and each observation is 2 dimensional.'...
-          'label contains the labels (i.e. the real digit) of that observation'];
-save('wine_pca_2', 'X', 'label', 'weights', 'means', 'sigmas','ReadMe');
+save('wine_pca_2', 'X', 'label');

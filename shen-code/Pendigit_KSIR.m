@@ -2,11 +2,12 @@
 % Genetic-based EM Algorithm for Learning Gaussian Mixture Models
 
 % This script import the pendigits data from a .txt file
-% perform the PCA to reduce the feature dimension
+% perform the Kernel Sliced Inverse Regression (KSIR)
+% to reduce the feature dimension
 
 clear, clc
-
 rng(0);
+
 fileName = 'pendigits_all.txt';
 rawData = importdata(fileName);
 Ndigit = 5;
@@ -20,8 +21,8 @@ label = X(:,17);
 X = X(:,1:16);
 
 % seperate data into training and testing
-ntr = 1000;
-nts = 1000;
+ntr = 3000;
+nts = 2000;
 X = X(1:ntr+nts, :);
 label = label(1:ntr+nts, :);
 
@@ -72,5 +73,5 @@ figure;
 gscatter(X2(:,1), X2(:,2),label_ts,[],'.',10);
 
 % dump the reduced feature and label to a .mat file
-X = X2';
+X = X2;
 save('pendigit_ksir_2', 'X', 'label');

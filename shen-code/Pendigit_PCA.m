@@ -1,12 +1,16 @@
 % EECS 545 F15 Final project
 % Genetic-based EM Algorithm for Learning Gaussian Mixture Models
+
 % This script import the pendigits data from a .txt file
-% perform the PCA to reduce the feature dimension
+% perform the Principle Component Analysis (PCA)
+% to reduce the feature dimensions
 
 clear, clc
+rng(0);
 
 fileName = 'pendigits_all.txt';
 rawData = importdata(fileName);
+rawData = rawData(randperm(length(rawData)), :);
 Ndigit = 5;
 
 % choose the digits from 0 to Ndigt-1
@@ -26,6 +30,13 @@ for k=1:d
     X(:,k) = xtemp;
 end
 
+%{
+% another way of standardizing data
+X = bsxfun(@minus, X, mean(X)); % center the data
+sigma = cov(X); % sample covariance matrix
+X = X * sqrtm(inv(sigma))'; % standardize the data
+%}
+
 % pca using matlab build-in function
 [U, ~, S] = pca(X);
 X = X';
@@ -37,7 +48,4 @@ gscatter(X(1,:), X(2,:),label,[],'.',5);
 
 % dump the reduced feature and label to a .mat file
 X = X';
-ReadMe = ['X is the feature matrix.' ...
-          'X contains 5629 observations and each observation is 2 dimensional.'...
-          'label contains the labels (i.e. the real digit) of that observation'];
-save('pendigit_pca_2', 'X', 'label', 'ReadMe');
+save('pendigit_pca_2', 'X', 'label');
