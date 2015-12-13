@@ -2,14 +2,14 @@ function GA_EM_main()
 close all;
 
 % Set GA-EM Parameters
-R = 3; % number of EM steps for each GA iteration
+R = 4; % number of EM steps for each GA iteration
 M = 15; % max number of components
 K = 6; % size of parent population
 H = 4;%floor(.8*K); % number of offspring
 p_m = 0.02; % mutation rate
 
 
-SEED = 0; % change this to get different data sets & initialization
+SEED = 123; % change this to get different data sets & initialization
 rng(SEED); % initialize sample data
 generateData = false;
 
@@ -20,7 +20,7 @@ if(generateData)
     [data, means, sigmas, MDL_true] = SampleData(N,C,d); % generate data
 else
     % write your own wrapper like LoadData() to load your true data set
-    [data, means, sigmas, C, N, d, MDL_true] = LoadData('..\..\datasets\pendigit_pca_2'); % real data
+    [data, means, sigmas, C, N, d, MDL_true] = LoadData('..\..\datasets\wine_pca_2'); % real data
 end
 
 disp(['True MDL: ', num2str(MDL_true)]); % print MDL value
@@ -34,8 +34,12 @@ hold on;
 scatter(means(:,1),means(:,2),'X');
 
 % plot true mixture (draw contour at f(x,y) = 0.1)
-xRange = min(data(:,1))-1:.1:max(data(:,1))+1; % x axis
-yRange = min(data(:,2))-1:.1:max(data(:,2))+1; % y axis
+minX = min(data(:,1));
+maxX = max(data(:,1));
+minY = min(data(:,2));
+maxY = max(data(:,2));
+xRange = minX-(maxX-minX)/10:(maxX-minX)/100:maxX+(maxX-minX)/10; % x axis
+yRange = minY-(maxY-minY)/10:(maxY-minY)/100:maxY+(maxY-minY)/10; % y axis
 [X, Y] = meshgrid(xRange,yRange); % all combinations of x, y
 for i=1:C
     Z = mvnpdf([X(:) Y(:)], means(i,:), sigmas(:,:,i)); % compute pdf

@@ -10,7 +10,7 @@ means = zeros(C, d);
 sigmas = zeros(d,d,C);
 
 for i=1:C
-    myX = X(label == labelSet(i),:);
+    myX = X(label(end-N+1:end) == labelSet(i),:);
     weights(i) = size(myX,1)/N;
     means(i,:) = mean(myX);
     sigmas(:,:,i) = cov(myX);
