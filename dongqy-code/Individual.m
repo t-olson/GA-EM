@@ -130,11 +130,11 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
                 
                 mdl_new = obj.MDL(X);
                 % Stopping criterion
-                if abs(mdl_new - mdl_old) < tol
-                    break
-                else
-                    mdl_old = mdl_new;
-                end
+%                 if abs(mdl_new - mdl_old) < tol
+%                     break
+%                 else
+%                     mdl_old = mdl_new;
+%                 end
 
                 % E-step
                 for k = 1:M
@@ -197,6 +197,9 @@ classdef Individual < handle        % !!!Caution : handle subclass, pass by refe
             if M~=0
                 tmp = 0;
                 for k = 1:M
+%                     if ~PD(sigma(:,:,k))
+%                         sigma(:,:,k)
+%                     end
                     tmp = tmp + w(k).*mvnpdf(X', mu(:, k)', sigma(:,:,k));
                 end
 

@@ -3,7 +3,7 @@
 
 % This is the main script to generate data, run GA_EM and plot
 
-rng(3);
+rng(8);
 % Load/Generate data from true_M 2D distributions
 gen_data = false;
 true_M = 3;

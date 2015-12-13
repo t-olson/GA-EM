@@ -4,7 +4,7 @@
 % % This is the main script to generate graphs for model selection
 
 % Load/Generate data from true_M 2D distributions
-gen_data = true;
+gen_data = false;
 true_M = 7;
 d = 2;
 if gen_data
@@ -13,29 +13,69 @@ if gen_data
 end
 
 % Run GA_EM on the data with different model parameters
-init_mode = 'k-means';  % Initialization mode : random or k-means
-K = 6;                  %   K : number of individual in the population
-H = 4;                  %   H : number of offsprings in the new population, assumed to be multiples of 2
-R = 3;                  %   R : number of iterations
-R_array = [1,3,10,50,100];
-mdl_cell = cell(1,5);
-Mmax = 15;              %   Mmax : maximal number of allowed components
-t = 0.95;               %   t : correlation threshold
-pm = 0.02;              %   pm : mutation probability
-for i = 1:length(R_array)
-    R = R_array(i);
-    [~, ~, ~, mdl_array] = GA_EM(X, K, H, R, Mmax, t, pm, init_mode);
-    fprintf('i = %d\n', i);
-    mdl_array
-    mdl_cell{i} = mdl_array;
-end
-
-% Make plots
 figure
-hold on
-for i = 1:length(R_array)
-    iter_array = 1:length(mdl_cell{i});
-    plot(iter_array, mdl_cell{i}, '--', 'LineWidth', 2);
+for p = 1:4
+    init_mode = 'random';  % Initialization mode : random or k-means
+    K = 6;                  %   K : number of individual in the population
+    H = 4;                  %   H : number of offsprings in the new population, assumed to be multiples of 2
+    R = 3;                  %   R : number of iterations
+    mdl_cell = cell(1,5);
+    Mmax = 15;              %   Mmax : maximal number of allowed components
+    t = 0.95;               %   t : correlation threshold
+    pm = 0.02;              %   pm : mutation probability
+    if p == 1           % R
+        para_array = [1,3,10,50,100];
+    elseif p == 2       % K
+        para_array = [4,6,10,20,30];
+    elseif p == 3       % H (H = pc*K)
+        K = 20;
+        para_array = [4,8,10,16,20];
+    elseif p == 4       % pm
+        para_array = [0.001,0.02,0.005,0.1,0.3];
+    end
+        
+    for i = 1:length(para_array)
+        if p == 1           % R
+            R = para_array(i);
+        elseif p == 2       % K
+            K = para_array(i);
+        elseif p == 3       % H (H = pc*K)
+            H = para_array(i);
+        elseif p == 4       % pm
+            pm = para_array(i);
+        end
+        [~, ~, ~, mdl_array] = GA_EM(X, K, H, R, Mmax, t, pm, init_mode);
+        
+        fprintf('i = %d\n', i);
+        mdl_array
+        mdl_cell{i} = mdl_array;
+    end
+
+    % Make plots
+    symbol_array = ['s-';'+-';'*-';'x-';'o-'];
+    legend_array = cell(1,length(para_array));
+    subplot(4, 1, p)
+    hold on
+    for i = 1:length(para_array)
+        if p == 1           % R
+            legend_array{i} = sprintf('R = %d', para_array(i));
+        elseif p == 2       % K
+            legend_array{i} = sprintf('K = %d', para_array(i));
+        elseif p == 3       % H (H = pc*K)
+            legend_array{i} = sprintf('H = %d', para_array(i));
+        elseif p == 4       % pm
+            legend_array{i} = sprintf('p_m = %.3f', para_array(i));
+        end
+
+        iter_array = 0:length(mdl_cell{i})-1;
+        plot(iter_array, mdl_cell{i}, symbol_array(i,:), 'LineWidth', 2, 'MarkerSize', 12);
+    end
+    legend(legend_array, 'Location', 'NorthEast', 'FontSize', 13, 'FontWeight', 'bold');
+    xlabel('Iteration');
+    ylabel('MDL value');
+    grid on
+    grid minor
+    set(gcf,'color','white')                        % White background for the figure.
+    set(gca,'FontSize',12, 'FontWeight', 'bold');
+    hold off
 end
-set(gca,'FontSize',12, 'FontWeight', 'bold');
-hold off
