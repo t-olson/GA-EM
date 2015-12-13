@@ -42,15 +42,15 @@ for file_k=1:length(file_name)
         weight_GA = final_individual.weight(final_individual.Binary == 1);
         % for each data point calculate the probablity of 
         % belonging to a certain cluster
-        pc = ones(best_M, n);
-        for k =1:best_M
+        pc = ones(final_M, n);
+        for k =1:final_M
             pc(k,:) = weight_GA(k)*mvnpdf(X', mu_GA(:, k)', sigma_GA(:,:,k));
         end
         % find the cluster id with highest probability
         [~, dc] = max(pc); 
         % another definition of identification rate
         n_id = 0;   % number of corrected identified points
-        for k = 1:best_M
+        for k = 1:final_M
             label_k = label(dc==k);
             label_k_maj = mode(label_k);
             n_id = n_id + length(find(label_k == label_k_maj)); 
