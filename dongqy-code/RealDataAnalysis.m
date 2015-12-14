@@ -10,12 +10,12 @@ d = 2;                  %   data, dimension
 K = 6;                  %   K : number of individual in the population
 H = 4;                  %   H : number of offsprings in the new population, assumed to be multiples of 2
 R = 7;                  %   R : number of iterations
-Mmax = 5;              %   Mmax : maximal number of allowed components
+Mmax = 20;              %   Mmax : maximal number of allowed components
 t = 0.95;               %   t : correlation threshold
 pm = 0.05;              %   pm : mutation probability
 
 init_mode = 'random';     %   Initialization mode : random or k-means
-file_name = 'pendigit_pca_2';  %   which data file to load
+file_name = 'pendigit_ksir_2';  %   which data file to load
 
 % load data
 load(file_name);
@@ -25,25 +25,7 @@ X = X';
 labelSet = unique(label);
 true_M = length(labelSet);           %   true number of clusters
 
-% plot the true data
-figure;
-gscatter(X(1,:), X(2,:),label,'brm','xo+', 10);
-hold on;
-for k=1:true_M
-    Xk = X(:, label==labelSet(k));
-    mu_true(:,k) = mean(Xk,2);
-    sigma_true(:,:,k) = cov(Xk');
-end
-xi = linspace(min(X(1, :)), max(X(1, :)));
-yi = linspace(min(X(2, :)), max(X(2, :)));
-[xm,ym] = meshgrid(xi,yi);
-for i=1:true_M
-    pm = mvnpdf( [xm(:), ym(:)], mu_true(:,i)', sigma_true(:,:,i));
-    pm = reshape(pm, size(xm));
-    contour(xm, ym, pm);
-end
 
-%{
 % run GA-EM a couple of times to find the best one
 n_rep = 10;
 final_mdl = 1e10;
@@ -60,6 +42,7 @@ for k = 1:n_rep
         final_M = best_M;
         final_individual = best_individual;
     end
+    disp(best_mdl);
 end
 
 % use the best result to get identification rate
@@ -78,19 +61,6 @@ fprintf('        AvgMDL = %6.5f (+/-) %6.5f\n', ...
                         mean(mdl_all), std(mdl_all));
 fprintf('        MinMDL = %6.5f\n', min(mdl_all));
 fprintf('        ID rate = %6.5f\n\n', rate_GA);
-
-% plot the figure from GA-EM results
-figure;
-gscatter(X(1,:), X(2,:),label,'brm','xo+', 10);
-hold on;
-xi = linspace(min(X(1, :)), max(X(1, :)));
-yi = linspace(min(X(2, :)), max(X(2, :)));
-[xm,ym] = meshgrid(xi,yi);
-for i=1:final_M
-    pm = mvnpdf( [xm(:), ym(:)], mu_GA(:,i)', sigma_GA(:,:,i));
-    pm = reshape(pm, size(xm));
-    contour(xm, ym, pm);
-end
 
 
 % run EM a couple of times with different M to find the best one
@@ -140,18 +110,51 @@ fprintf('        AvgMDL = %6.5f (+/-) %6.5f\n', ...
 fprintf('        MinMDL = %6.5f\n', min(mdl_all));
 fprintf('        ID rate = %6.5f\n\n', rate_EM);
 
+% plotting section
+% define the mesh
+dx = (max(X(1, :)) - min(X(1,:)))*0.05;
+dy = (max(X(2, :)) - min(X(2,:)))*0.05;
+xi = linspace(min(X(1, :))-dx, max(X(1, :))+dx);
+yi = linspace(min(X(2, :))-dy, max(X(2, :))+dy);
+[xm,ym] = meshgrid(xi,yi);
+
+
+%{
+% plot the true data
+figure;
+gscatter(X(1,:), X(2,:),label,'brmygck','xo+d^vs', 7);
+hold on;
+for k=1:true_M
+    Xk = X(:, label==labelSet(k));
+    mu_true(:,k) = mean(Xk,2);
+    sigma_true(:,:,k) = cov(Xk');
+end
+for i=1:true_M
+    pm = mvnpdf( [xm(:), ym(:)], mu_true(:,i)', sigma_true(:,:,i));
+    pm = reshape(pm, size(xm));
+    contour(xm, ym, pm);
+end
+title('True Data');
+
 % plot the figure from GA-EM results
 figure;
-gscatter(X(1,:), X(2,:),label,'brm','xo+', 10);
+gscatter(X(1,:), X(2,:),label,'brmygck','xo+d^vs', 7);
 hold on;
-xi = linspace(min(X(1, :)), max(X(1, :)));
-yi = linspace(min(X(2, :)), max(X(2, :)));
-[xm,ym] = meshgrid(xi,yi);
-for i=1:final_M
+for i=1:length(mu_GA)
+    pm = mvnpdf( [xm(:), ym(:)], mu_GA(:,i)', sigma_GA(:,:,i));
+    pm = reshape(pm, size(xm));
+    contour(xm, ym, pm);
+end
+title('GA-EM');
+
+% plot the figure from EM results
+figure;
+gscatter(X(1,:), X(2,:),label,'brmygck','xo+d^vs', 7);
+hold on;
+for i=1:length(mu_EM)
     pm = mvnpdf( [xm(:), ym(:)], mu_EM(:,i)', sigma_EM(:,:,i));
     pm = reshape(pm, size(xm));
     contour(xm, ym, pm);
 end
+title('EM');
 %}
-
-

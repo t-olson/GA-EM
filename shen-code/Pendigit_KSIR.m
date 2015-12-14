@@ -22,7 +22,7 @@ X = X(:,1:16);
 
 % seperate data into training and testing
 ntr = 3000;
-nts = 2000;
+nts = 2629;
 X = X(1:ntr+nts, :);
 label = label(1:ntr+nts, :);
 
