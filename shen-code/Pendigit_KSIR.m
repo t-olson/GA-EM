@@ -50,7 +50,7 @@ gs = @(x1, x2, s) exp(-dist2(x1, x2)/(2*s*s));
 K = gs(Xtr, Xtr, 20);
 % center the train-train kernel matrix
 A = ones(ntr, ntr) / ntr;
-K = K - 2*K*A - A*K*A;
+K = K - K*A - A*K - A*K*A;
 
 % perform the KSIR on traing data
 opts.pType = 'c';
@@ -71,6 +71,7 @@ end
 % draw the clusters
 figure;
 gscatter(X2(:,1), X2(:,2),label_ts,[],'.',10);
+
 
 % dump the reduced feature and label to a .mat file
 X = X2;

@@ -14,8 +14,8 @@ Mmax = 20;              %   Mmax : maximal number of allowed components
 t = 0.95;               %   t : correlation threshold
 pm = 0.05;              %   pm : mutation probability
 
-init_mode = 'random';     %   Initialization mode : random or k-means
-file_name = 'pendigit_ksir_2';  %   which data file to load
+init_mode = 'k-means';     %   Initialization mode : random or k-means
+file_name = 'pendigit_kpca_2';  %   which data file to load
 
 % load data
 load(file_name);
