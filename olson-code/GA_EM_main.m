@@ -1,22 +1,24 @@
-% function GA_EM_main(varargin)
+%% Main function to run, plot, and compare GA_EM and EM on data sets %%
+ % Author: T.Olson
+function GA_EM_main(varargin)
 clearvars -except varargin;
 
 % % Set GA-EM Parameters
-R = 10; % number of EM steps for each GA iteration
-M = 20; % max number of components
-K = 6; % size of parent population
-H = 4;%floor(.8*K); % number of offspring
-p_m = 0.1; % mutation rate
-% R = 3; % number of EM steps for each GA iteration
-% M = 15; % max number of components
+% R = 10; % number of EM steps for each GA iteration
+% M = 20; % max number of components
 % K = 6; % size of parent population
 % H = 4;%floor(.8*K); % number of offspring
-% p_m = 0.02; % mutation rate
+% p_m = 0.1; % mutation rate
+R = 3; % number of EM steps for each GA iteration
+M = 15; % max number of components
+K = 6; % size of parent population
+H = 4;%floor(.8*K); % number of offspring
+p_m = 0.02; % mutation rate
 
 SEED = 665; % change this to get different data sets & initialization
-% if (nargin > 0)
-%     SEED = varargin{1};
-% end
+if (nargin > 0)
+    SEED = varargin{1};
+end
 rng(SEED); % initialize sample data
 generateData = false;
 
@@ -109,4 +111,4 @@ title(['MDL vs iterations (', num2str(length(MDL_list)), ')']);
 
 % Output ratio of execution times
 disp(['Ratio of execution times: ', num2str(GA_EMtime/EMtime)]);
-% end
+end

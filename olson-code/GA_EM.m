@@ -1,3 +1,5 @@
+%% Primary GA_EM code %%
+ % Author: T.Olson
 function [best, MDL_list] = GA_EM(data, R, M, K, H, p_m)
 % Initialization
 t = 0;
