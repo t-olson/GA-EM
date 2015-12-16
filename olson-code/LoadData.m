@@ -1,3 +1,5 @@
+%% Load data from file and process for GA-EM %%
+ % Author: T.Olson
 function [X, means, sigmas, C, N, d, varargout] = LoadData(filename)
 
 load(filename,'X','label');

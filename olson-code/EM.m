@@ -1,3 +1,5 @@
+%% EM algorithm acting on a population %%
+ % Author: T.Olson
 function Pop = EM(Pop, data, R)
 % Pop is a K x 1 population of structs
 
@@ -8,7 +10,7 @@ end
 
 function P = runEM(P, data, R)
 code=P.code;
-M = length(code);
+M = sum(code);
 
 logLike = Inf; % dummy log-likelihood
 eps = 10^-5; % if relative change in logLikelihood < eps, terminate early
@@ -16,21 +18,19 @@ eps = 10^-5; % if relative change in logLikelihood < eps, terminate early
 gamma = zeros(size(data, 1), M);
 
 ct = 0;
+ws=P.weights(logical(code));
+mus=P.means(:,logical(code));
+sigs=P.covs(:,:,logical(code));
+
 while (ct < R) % Can also break after E-step if logLikelihood doesn't change
     ct = ct + 1;
-    ws=P.weights;
-    mus=P.means;
-    sigs=P.covs;
     
     % E-step (update gamma)
     for k=1:M
-        if (code(k) == 0)
-            continue;
-        end
         gamma(:,k) = ws(k) * mvnpdf(data, mus(:,k)', sigs(:,:,k));
     end
     
-    kSum = sum(gamma(:,logical(code)),2);
+    kSum = sum(gamma,2);
     
     oldLogLike = logLike;
     logLike = sum(log(kSum));
@@ -38,13 +38,10 @@ while (ct < R) % Can also break after E-step if logLikelihood doesn't change
         break;
     end
     
-    gamma(:,logical(code)) = gamma(:,logical(code)) ./ repmat(kSum, 1, sum(code));
+    gamma = gamma ./ repmat(kSum, 1, M);
     
     % M-step (update weights, means, sigma)
     for k=1:M
-        if (code(k) == 0)
-            continue;
-        end
         % weights
         ws(k) = mean(gamma(:, k));
         
@@ -54,13 +51,12 @@ while (ct < R) % Can also break after E-step if logLikelihood doesn't change
         % covariances
         centered = bsxfun(@minus, data, mus(:,k)'); % center data
         sigs(:,:,k) = bsxfun(@times, centered, gamma(:,k))' * centered /...
-            sum(gamma(:,k)) + (1e-6)*eye(size(data,2)); % add small stabilizer
+            sum(gamma(:,k));% add small stabilizer
     end
-    
-    % store updated values
-    P.weights = ws;
-    P.means = mus;
-    P.covs = sigs;
 end
-
+    
+% store updated values
+P.weights(logical(code)) = ws;
+P.means(:,logical(code)) = mus;
+P.covs(:,:,logical(code)) = sigs;
 end

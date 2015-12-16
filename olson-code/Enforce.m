@@ -1,3 +1,5 @@
+%% Enforce mutation on highly correlated components %%
+ % Author: T.Olson
 function newP = Enforce(P, data)
 t_corr = 0.95; % maximum correlation allowed between components
 

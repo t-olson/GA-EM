@@ -1,3 +1,5 @@
+%% Compute log-likelihood for an individual %%
+ % Author: T.Olson
 function logLike = logLikelihood(P, data)
 code=P.code;
 ws=P.weights;

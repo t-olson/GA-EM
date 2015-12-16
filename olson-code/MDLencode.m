@@ -1,3 +1,5 @@
+%% Compute the MDL value for members of a population %%
+ % Author: T.Olson
 function MDL = MDLencode(P, data)
 [N, d] = size(data);
 MDL = zeros(size(P));

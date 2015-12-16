@@ -1,3 +1,5 @@
+%% Recombine to produce offspring %%
+ % Author: T.Olson
 function children = Recombine(P, H, data)
 thresh = 0.05; % threshold for annihilating component (should set according to dimension of data)
 children = repmat( struct('code', [], 'weights', [], 'means', [], 'covs',...

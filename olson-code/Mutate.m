@@ -1,3 +1,5 @@
+%% Mutate all but best(first) candidate %%
+ % Author: T.Olson
 function P = Mutate(P, data, p_m)
 M = length(P(1).code);
 [~,d] = size(data);

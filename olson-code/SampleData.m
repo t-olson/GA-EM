@@ -1,3 +1,5 @@
+%% Generate synthetic data %%
+ % Author: T.Olson
 function [data, means, sigmas, varargout] = SampleData(N, C, d)
 
 means = 8*rand(C, d) - 4;

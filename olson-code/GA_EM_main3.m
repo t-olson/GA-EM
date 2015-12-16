@@ -1,19 +1,19 @@
-% function GA_EM_main(varargin)
+% function GA_EM_main3(varargin)
 clearvars -except varargin;
 
-% % Set GA-EM Parameters
-R = 10; % number of EM steps for each GA iteration
-M = 20; % max number of components
-K = 6; % size of parent population
-H = 4;%floor(.8*K); % number of offspring
-p_m = 0.1; % mutation rate
-% R = 3; % number of EM steps for each GA iteration
-% M = 15; % max number of components
+% Set GA-EM Parameters
+% R = 10; % number of EM steps for each GA iteration
+% M = 20; % max number of components
 % K = 6; % size of parent population
 % H = 4;%floor(.8*K); % number of offspring
-% p_m = 0.02; % mutation rate
+% p_m = 0.1; % mutation rate
+R = 3; % number of EM steps for each GA iteration
+M = 15; % max number of components
+K = 6; % size of parent population
+H = 4;%floor(.8*K); % number of offspring
+p_m = 0.02; % mutation rate
 
-SEED = 665; % change this to get different data sets & initialization
+SEED = 999; % change this to get different data sets & initialization
 % if (nargin > 0)
 %     SEED = varargin{1};
 % end
@@ -27,31 +27,40 @@ if(generateData)
     [data, means, sigmas, MDL_true] = SampleData(N,C,d); % generate data
 else
     % write your own wrapper like LoadData() to load your true data set
-    [data, means, sigmas, C, N, d, MDL_true] = LoadData('..\..\datasets\pendigit_kpca_2'); % real data
+    [data, means, sigmas, C, N, d, MDL_true] = LoadData('..\..\datasets\wine_pca_3'); % real data
 end
 
 disp(['True MDL: ', num2str(MDL_true)]); % print MDL value
 
 % plot actual data
 scrsz = get(groot,'ScreenSize');
-figure('Position',[1 scrsz(4)/6 scrsz(3)*2/3 scrsz(4)*2/3])
+fig=figure('Position',[1 scrsz(4)/6 scrsz(3)*2/3 scrsz(4)*2/3]);
+fig.PaperPositionMode = 'auto';
 subplot(2,2,1);
-scatter(data(:,1), data(:,2));
+scatter3(data(:,1), data(:,2), data(:,3),'filled');
 hold on;
-scatter(means(:,1),means(:,2),'X');
+scatter3(means(:,1),means(:,2), means(:,3),'X');
 
 % plot true mixture (draw contour at f(x,y) = 0.1)
 minX = min(data(:,1));
 maxX = max(data(:,1));
 minY = min(data(:,2));
 maxY = max(data(:,2));
-xRange = minX-(maxX-minX)/10:(maxX-minX)/100:maxX+(maxX-minX)/10; % x axis
-yRange = minY-(maxY-minY)/10:(maxY-minY)/100:maxY+(maxY-minY)/10; % y axis
-[X, Y] = meshgrid(xRange,yRange); % all combinations of x, y
+minZ = min(data(:,3));
+maxZ = max(data(:,3));
+xRange = minX-(maxX-minX)/10:(maxX-minX)/20:maxX+(maxX-minX)/10; % x axis
+yRange = minY-(maxY-minY)/10:(maxY-minY)/20:maxY+(maxY-minY)/10; % y axis
+zRange = minZ-(maxZ-minZ)/10:(maxZ-minZ)/20:maxZ+(maxZ-minZ)/10; % x axis
+[X, Y, Z] = meshgrid(xRange,yRange,zRange); % all combinations of x, y, z
+lo = 0.09;hi=.20;
+s=['x','o','*','s','+','d','v'];
+c=['r','g','k','c','b'];
 for i=1:C
-    Z = mvnpdf([X(:) Y(:)], means(i,:), sigmas(:,:,i)); % compute pdf
-    Z = reshape(Z,size(X));
-    contour(X,Y,Z, 'LineColor', [0 0 0], 'LineWidth', 2);  % contour plot
+    W = mvnpdf([X(:) Y(:) Z(:)], means(i,:), sigmas(:,:,i)); % compute pdf
+    W = reshape(W/max(W),size(X));
+    sc=scatter3(X((lo<W) & (W<hi)), Y((lo<W) & (W<hi)), Z((lo<W) & (W<hi)));
+    sc.Marker=s(i);
+    sc.MarkerEdgeColor=c(i);
 end
 title(['Actual data and mixtures, MDL = ',  num2str(MDL_true)]);
 
@@ -69,12 +78,15 @@ disp(['EM: ', num2str(MDL_EM)]); % print MDL value
 
 % plot EM-mixture
 subplot(2,2,2);
-scatter(data(:,1), data(:,2));
+scatter3(data(:,1), data(:,2), data(:,3),'filled');
 hold on;
 for i=1:C
-    Z = mvnpdf([X(:) Y(:)], EM_result.means(:,i)', EM_result.covs(:,:,i)); % compute Gaussian pdf
-    Z = reshape(Z,size(X));
-    contour(X,Y,Z, 'LineColor', [1 0 0], 'LineWidth', 2);  % contour plot
+    W = mvnpdf([X(:) Y(:) Z(:)], EM_result.means(:,i)', EM_result.covs(:,:,i)); % compute Gaussian pdf
+    W = reshape(W/max(W),size(X));
+    lo = 0.09;hi=.20;
+    sc=scatter3(X((lo<W) & (W<hi)), Y((lo<W) & (W<hi)), Z((lo<W) & (W<hi)));
+    sc.Marker=s(i);
+    sc.MarkerEdgeColor=c(i);
 end
 title(['Best EM Mixture (', num2str(C), ' clusters), MDL = ',  num2str(MDL_EM)]);
 
@@ -90,14 +102,17 @@ disp(['GA_EM: ', num2str(MDL_list(end))]); % print final MDL value
 
 % plot GA_EM-mixture
 subplot(2,2,3);
-scatter(data(:,1), data(:,2));
+scatter3(data(:,1), data(:,2), data(:,3),'filled');
 hold on;
 index = 1:M;
 index = index(logical(GA_EM_result(1).code));
 for i=1:length(index)
-    Z = mvnpdf([X(:) Y(:)], GA_EM_result.means(:,index(i))', GA_EM_result.covs(:,:,index(i))); % compute Gaussian pdf
-    Z = reshape(Z,size(X));
-    contour(X,Y,Z, 'LineColor', [0 1 0], 'LineWidth', 2);  % contour plot
+    W = mvnpdf([X(:) Y(:) Z(:)], GA_EM_result.means(:,index(i))', GA_EM_result.covs(:,:,index(i))); % compute Gaussian pdf
+    W = reshape(W/max(W),size(X));
+    lo = 0.09;hi=.20;
+    sc=scatter3(X((lo<W) & (W<hi)), Y((lo<W) & (W<hi)), Z((lo<W) & (W<hi)));
+    sc.Marker=s(i);
+    sc.MarkerEdgeColor=c(i);
 end
 title(['Best GA-EM Mixture (', num2str(sum(GA_EM_result(1).code)), ' clusters), MDL = ',  num2str(MDL_list(end))]);
 

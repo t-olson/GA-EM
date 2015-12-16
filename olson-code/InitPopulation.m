@@ -1,3 +1,5 @@
+%% Initialize Population %%
+ % Author: T.Olson
 function P = InitPopulation(data, M, K)
     % Initializes population
     [N, d] = size(data);
