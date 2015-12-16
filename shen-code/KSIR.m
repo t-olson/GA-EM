@@ -1,3 +1,6 @@
+% This is the implementation of KSIR we found online.
+% We didn't use KSIR in the end
+
 function [SIR, vopts] = KSIR(K, Y, d, s, opts)
 % Input: 
 % K: n X n kernel matrix; K(i,j)=K(x_i,x_j)
