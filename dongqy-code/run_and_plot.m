@@ -1,5 +1,6 @@
 % EECS 545 Final project
 % Genetic-based EM Algorithm for Learning Gaussian Mixture Models
+% Author: Qiaoyuan Dong
 
 % This is the main script to generate data, run GA_EM and plot
 
