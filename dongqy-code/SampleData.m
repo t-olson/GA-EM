@@ -1,4 +1,5 @@
 % Generate Sample data
+% Author: Qiaoyuan Dong
 %   d : dimension
 %   N : number of points to be generated
 %   M : number of Gaussian distributions

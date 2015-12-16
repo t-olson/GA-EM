@@ -1,4 +1,5 @@
 % EECS 545 Final project
+% Author: Qiaoyuan Dong
 % Genetic-based EM Algorithm for Learning Gaussian Mixture Models
 %   X : d x n training data matrix
 %   K : number of individual in the population

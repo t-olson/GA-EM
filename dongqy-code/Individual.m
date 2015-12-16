@@ -1,3 +1,5 @@
+% Author: Qiaoyuan Dong
+
 classdef Individual < handle        % !!!Caution : handle subclass, pass by reference
     properties
         Binary      % Boolean array of Mmax length
