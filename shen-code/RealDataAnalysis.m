@@ -4,6 +4,8 @@
 % This script evaluate the performance of EM and GA-EM
 % and produce figures as illustration
 
+% author: Wenbo Shen (shenwb@umich.edu)
+
 clear, clc
 % Define the parameter values
 d = 2;                  %   data, dimension

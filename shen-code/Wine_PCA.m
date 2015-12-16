@@ -5,6 +5,8 @@
 % perform the Principle Component Analysis (PCA)
 % to reduce the feature dimensions
 
+% author: Wenbo Shen (shenwb@umich.edu)
+
 clear, clc
 rng(0);
 

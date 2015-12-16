@@ -5,6 +5,8 @@
 % perform the Kernel Sliced Inverse Regression (KSIR)
 % to reduce the feature dimension
 
+% author: Wenbo Shen (shenwb@umich.edu)
+
 clear, clc
 rng(0);
 

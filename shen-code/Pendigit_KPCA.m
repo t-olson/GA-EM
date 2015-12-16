@@ -5,6 +5,8 @@
 % perform the Kernel Principle Component Analysis (KPCA)
 % to reduce the feature dimensions
 
+% author: Wenbo Shen (shenwb@umich.edu)
+
 clear, clc
 rng(0);
 

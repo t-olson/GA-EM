@@ -5,6 +5,9 @@
 % Gaussian mixture model and the true label ids to 
 % calculate the rate of correctly clustered data points
 
+% author: Wenbo Shen (shenwb@umich.edu)
+
+
 function [rate] = Id_rate(weight, mu, sigma, X, label)
 
 % for each data point calculate the probablity of 
